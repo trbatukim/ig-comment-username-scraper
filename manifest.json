@@ -1,0 +1,11 @@
+{
+  "manifest_version": 3,
+  "name": "IG Comment Scraper",
+  "version": "1.0.0",
+  "description": "Scrapes unique commenter usernames from Instagram posts and exports to JSON",
+  "permissions": ["activeTab", "scripting"],
+  "host_permissions": ["https://www.instagram.com/*"],
+  "action": {
+    "default_popup": "popup.html"
+  }
+}
