@@ -1,6 +1,8 @@
 (function () {
   'use strict';
 
+  const _browser = typeof browser !== 'undefined' ? browser : chrome;
+
   if (window.__igScraperLoaded) return;
   window.__igScraperLoaded = true;
 
@@ -122,7 +124,7 @@
         if (clicked) {
           pagesLoaded++;
           missStreak = 0;
-          chrome.runtime.sendMessage({
+          _browser.runtime.sendMessage({
             action: 'progress',
             text: `Yorumlar taranıyor... (batch ${pagesLoaded} loaded)`,
           });
@@ -133,13 +135,13 @@
         }
       }
 
-      chrome.runtime.sendMessage({ action: 'progress', text: 'Yorumcular çıkarılıyor...' });
+      _browser.runtime.sendMessage({ action: 'progress', text: 'Yorumcular çıkarılıyor...' });
 
       const commenters = extractCommenters();
 
       if (includeRealNames) {
         for (let i = 0; i < commenters.length; i++) {
-          chrome.runtime.sendMessage({
+          _browser.runtime.sendMessage({
             action: 'progress',
             text: `İsimler alınıyor... (${i + 1}/${commenters.length})`,
           });
@@ -149,19 +151,19 @@
         }
       }
 
-      chrome.runtime.sendMessage({
+      _browser.runtime.sendMessage({
         action: 'done',
         commenters,
         postUrl: window.location.href,
       });
     } catch (err) {
-      chrome.runtime.sendMessage({ action: 'error', text: `Error: ${err.message}` });
+      _browser.runtime.sendMessage({ action: 'error', text: `Error: ${err.message}` });
     } finally {
       isRunning = false;
     }
   }
 
-  chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
+  _browser.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
     if (msg.action === 'scrape') run(msg.includeRealNames);
     sendResponse({});
     return true;

@@ -1,3 +1,5 @@
+const _browser = typeof browser !== 'undefined' ? browser : chrome;
+
 const statusEl    = document.getElementById('status');
 const scrapeBtn   = document.getElementById('scrape-btn');
 const downloadBtn = document.getElementById('download-btn');
@@ -16,7 +18,7 @@ function setLoading(on) {
 }
 
 // Listen for messages coming back from the content script
-chrome.runtime.onMessage.addListener((msg) => {
+_browser.runtime.onMessage.addListener((msg) => {
   if (msg.action === 'progress') {
     setStatus(msg.text);
   } else if (msg.action === 'done') {
@@ -38,7 +40,7 @@ chrome.runtime.onMessage.addListener((msg) => {
 });
 
 scrapeBtn.addEventListener('click', async () => {
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  const [tab] = await _browser.tabs.query({ active: true, currentWindow: true });
 
   if (!tab?.url?.match(/instagram\.com\/(p|reel)\//)) {
     setStatus('Navigate to an Instagram post or reel first.', 'error');
@@ -54,12 +56,12 @@ scrapeBtn.addEventListener('click', async () => {
 
   // Inject content script if not already present, then trigger scrape
   try {
-    await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ['content.js'] });
+    await _browser.scripting.executeScript({ target: { tabId: tab.id }, files: ['content.js'] });
   } catch {
     // Already injected — that's fine
   }
 
-  chrome.tabs.sendMessage(tab.id, { action: 'scrape', includeRealNames: realNamesTggl.checked });
+  _browser.tabs.sendMessage(tab.id, { action: 'scrape', includeRealNames: realNamesTggl.checked });
   setStatus('Yorumlar yükleniyor...');
 });
 
