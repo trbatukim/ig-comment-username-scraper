@@ -1,0 +1,3 @@
+# Chrome Extension Publishing Files
+*.crx
+*.pem
